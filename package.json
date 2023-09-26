@@ -1,0 +1,42 @@
+{
+  "name": "utility",
+  "version": "1.0.0",
+  "description": "Utility Eva Energy",
+  "author": "Giuseppe Marinelli",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.0.0",
+    "@nuxtjs/dotenv": "^1.4.1",
+    "@svg-maps/italy": "^1.0.1",
+    "@tinymce/tinymce-vue": "^3.2.8",
+    "apexcharts": "^3.26.2",
+    "bootstrap-vue-treeview": "^1.0.8",
+    "cookie-universal-nuxt": "^2.1.4",
+    "cross-env": "^5.2.0",
+    "crypto-js": "^4.0.0",
+    "element-ui": "^2.4.6",
+    "file-saver": "^2.0.5",
+    "jquery": "^3.7.1",
+    "md5": "^2.3.0",
+    "nodemailer": "^6.9.5",
+    "nuxt": "^2.0.0",
+    "tinymce": "^6.7.0",
+    "vue-apexcharts": "^1.6.1",
+    "vue-count-to": "^1.0.13",
+    "vue-svg-map": "^1.2.0",
+    "vue-upload-component": "^2.8.23",
+    "vue2-dropzone": "^3.6.0",
+    "vuedraggable": "^2.24.3",
+    "xlsx": "^0.17.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0",
+    "sass-loader": "^11.0.1"
+  }
+}

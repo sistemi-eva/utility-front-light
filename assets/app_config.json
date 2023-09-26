@@ -1,0 +1,77 @@
+{
+  "aziende": [
+    {
+      "id": "ugm",
+      "name": "Union Gas e Luce"
+    },
+    {
+      "id": "2g",
+      "name": "2G Energia"
+    },
+    {
+      "id": "semplice",
+      "name": "Semplice Gas e Luce"
+    },
+    {
+      "id": "aurah",
+      "name": "Aurah Energia Solidale"
+    },
+    {
+      "id": "piuenergie",
+      "name": "PIU ENERGIE"
+    },
+    {
+      "id": "gesenuenergia",
+      "name": "Gesenu Energia"
+    },
+    {
+      "id": "barocco",
+      "name": "Barocco SPA"
+    }
+  ],
+  "mappa_italia": {
+    "veneto" : "Veneto",
+    "lazio" : "Lazio",
+    "sicily" : "Sicilia",
+    "emilia-romagna" : "Emilia-Romagna",
+    "aosta-valley" : "Valle D Aosta",
+    "abruzzo" : "Abruzzo",
+    "calabria" : "Calabria",
+    "friuli-venezia-giulia" : "Friuli-Venezia Giulia",
+    "trentino-south-tyrol" : "Trentino-Alto Adige",
+    "campania" : "Campania",
+    "liguria" : "Liguria",
+    "molise" : "Molise",
+    "apulia" :  "Puglia",
+    "lombardy" : "Lombardia",
+    "sardinia" : "Sardegna",
+    "umbria" : "Umbria",
+    "tuscany" : "Toscana",
+    "piedmont" : "Piemonte",
+    "basilicata" : "Basilicata",
+    "marche" : "Marche"
+  },
+  "mappa_italia_reversed": {
+    "Veneto" : "veneto",
+    "Lazio" : "lazio",
+    "Sicilia" : "sicily",
+    "Emilia-Romagna" : "emilia-romagna",
+    "Valle D'Aosta" : "aosta-valley",
+    "Abruzzo" : "abruzzo",
+    "Calabria" : "calabria",
+    "Friuli-Venezia Giulia" : "friuli-venezia-giulia",
+    "Trentino-Alto Adige" : "trentino-south-tyrol",
+    "Campania" : "campania",
+    "Liguria" : "liguria",
+    "Molise" : "molise",
+    "Puglia" :  "apulia",
+    "Lombardia" : "lombardy",
+    "Sardegna" : "sardinia",
+    "Umbria" : "umbria",
+    "Toscana" : "tuscany",
+    "Piemonte" : "piedmont",
+    "Basilicata" : "basilicata",
+    "Marche" : "marche"
+  }
+  
+}
