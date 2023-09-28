@@ -80,6 +80,6 @@ module.exports = {
   server: {
     port: 4000, //4000, // default: 3000
     //host: '192.168.2.147' //'192.168.2.26' // default: localhost
-    host: process.env.NODE_ENV !== 'production' ? '127.0.0.1' : '192.168.2.147'
+    host: process.env.NODE_ENV !== 'production' ? '127.0.0.1' : '192.168.2.59'
   }
 }
