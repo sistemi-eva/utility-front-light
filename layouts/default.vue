@@ -24,6 +24,7 @@
             <img style="display: block; margin-left: auto; margin-right: auto; width: 50%;" src="http://www.evaenergyservice.it/assets/img/logo.png">
           </div>
           <div style="padding:15px" >
+            <div v-if="permissions.includes('superadmin')">
             <el-select style="width:100%" v-if="currentMenu.section == 'rcu-ee'" @change="updateConfig" v-model="tenant" placeholder="Seleziona">
               <el-option
                 v-for="item in tenants"
@@ -33,7 +34,9 @@
                 :value="item.name">
               </el-option>
             </el-select>
+            </div>
 
+            <div v-if="permissions.includes('superadmin')">
             <el-select style="width:100%" v-if="currentMenu.section == 'rcu-gas'" @change="updateConfigGas" v-model="tenantGas" placeholder="Seleziona">
               <el-option
                 v-for="item in tenants"
@@ -43,6 +46,7 @@
                 :value="item.name">
               </el-option>
             </el-select>
+            </div>
             <el-select v-if="currentMenu.section == 'rcu-ee' || currentMenu.section == 'rcu-gas'" style="width:100%;padding-top:10px" @change="updateViewConfig" v-model="view" placeholder="Seleziona">
               <el-option
                 v-for="item in visteRcu"

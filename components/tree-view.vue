@@ -27,7 +27,7 @@ export default {
     bTreeView,
   },
   async mounted() {
-    this.getAgenti();
+    //this.getAgenti();
   },
   data() {
     return {

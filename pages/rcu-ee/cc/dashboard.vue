@@ -150,6 +150,7 @@ export default {
   },
   methods: {
     async getLastImport() {
+      
       await this.$axios.get('/api/rcu-ee/cc/last-import', {
         headers:{
           'Secret-Key' : this.$store.getters['authToken']

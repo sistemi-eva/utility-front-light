@@ -80,6 +80,9 @@ export default {
         await this.$cookies.set('name',res.data.data.name, {path: '/'})
         await this.$store.commit('setViewRcu', 'reale')
         await this.$cookies.set('view_rcu','reale', {path: '/'})
+        await this.$cookies.set('tenant_ee',res.data.data.tenant)
+        await this.$cookies.set('tenant_gas',res.data.data.tenant)
+
         this.$router.push('/')
       }).catch((e)=>{
         console.log("e",e)

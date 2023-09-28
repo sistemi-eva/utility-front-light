@@ -1,7 +1,7 @@
 <template>
   <div class="cards-list">
 
-    <!-- FLUSSI -->
+    <!-- FLUSSI 
     <div style="flex: 0 0 20%">
       <div 
       @click="permissions.includes('flussi') || permissions.includes('admin') ? goToPage('/flussi/cronologia') : callNoPermissions()"  
@@ -23,8 +23,9 @@
         </div>
       </div>
     </div>
+    -->
 
-    <!-- PRECHECK -->
+    <!-- PRECHECK 
     <div style="flex: 0 0 20%">
       <div 
         @click="permissions.includes('precheck') || permissions.includes('admin') ? goToPage('/precheck/crea') : callNoPermissions()" 
@@ -43,8 +44,9 @@
         </div>
       </div>
     </div>
+    -->
 
-    <!-- SMS -->
+    <!-- SMS 
     <div style="flex: 0 0 20%">
       <div 
         @click="permissions.includes('messaggi') || permissions.includes('admin') ? goToPage('/messaggi/invio') : callNoPermissions()" 
@@ -63,8 +65,9 @@
         </div>
       </div>
     </div>
+    -->
 
-    <!-- AGING  -->
+    <!-- AGING 
     <div style="flex: 0 0 20%">
       <div
         @click="permissions.includes('aging') || permissions.includes('admin') ? goToPage('/aging/crea'): callNoPermissions()" 
@@ -83,8 +86,9 @@
         </div>
       </div>
     </div>
+     -->
 
-    <!-- agenzia dogane -->
+    <!-- agenzia dogane
     <div style="flex: 0 0 20%">
       <div 
         @click="permissions.includes('agenziadogane') || permissions.includes('admin') ? goToPage('/agenziadogane/crea-singolo') : callNoPermissions()" 
@@ -103,8 +107,9 @@
         </div>
       </div>
     </div>
+     -->
 
-    <!-- Fatturazione -->
+    <!-- Fatturazione 
     <div style="flex: 0 0 20%">
       <div
         @click="permissions.includes('fatturazione') || permissions.includes('admin') ? goToPage('/fatturazionepassiva/history') : callNoPermissions()" 
@@ -123,13 +128,13 @@
         </div>
       </div>
     </div>
-
+    -->
     <!-- RCU CC -->
     <div style="flex: 0 0 20%">
       <div
-        @click="permissions.includes('rcu-ee-cc') || permissions.includes('rcu-ee-udd') ||  permissions.includes('admin') ? goToPage('/rcu-ee/cc/dashboard') : callNoPermissions()" 
-        :class="permissions.includes('rcu-ee-cc') || permissions.includes('rcu-ee-udd') || permissions.includes('admin') ? 'card' : 'card-disabled'" 
-        :style="permissions.includes('rcu-ee-cc') || permissions.includes('rcu-ee-udd') || permissions.includes('admin') ? 'background-color:#a83283' : 'background-color:#a83283; opacity: 0.3'">
+        @click="permissions.includes('operatore') || permissions.includes('admin') ? goToPage('/rcu-ee/cc/dashboard') : callNoPermissions()" 
+        :class="permissions.includes('operatore') || permissions.includes('admin') ? 'card' : 'card-disabled'" 
+        :style="permissions.includes('operatore') || permissions.includes('admin') ? 'background-color:#a83283' : 'background-color:#a83283; opacity: 0.3'">
         <div class="card_image">
           <lord-icon v-if="LordIcon"
           src="https://cdn.lordicon.com/huwchbks.json"
@@ -147,9 +152,9 @@
     <!-- RCU UDD -->
     <div style="flex: 0 0 20%">
       <div
-        @click="permissions.includes('rcu-gas-cc') || permissions.includes('rcu-gas-udd') ||  permissions.includes('admin') ? goToPage('/rcu-gas/udd/dashboard') : callNoPermissions()" 
-        :class="permissions.includes('rcu-gas-cc') || permissions.includes('rcu-gas-udd') || permissions.includes('admin') ? 'card' : 'card-disabled'" 
-        :style="permissions.includes('rcu-gas-cc') || permissions.includes('rcu-gas-udd') || permissions.includes('admin') ? 'background-color:#32a89d' : 'background-color:#32a89d; opacity: 0.3'">
+        @click="permissions.includes('operatore') ||  permissions.includes('admin') ? goToPage('/rcu-gas/udd/dashboard') : callNoPermissions()" 
+        :class="permissions.includes('operatore') || permissions.includes('admin') ? 'card' : 'card-disabled'" 
+        :style="permissions.includes('operatore') || permissions.includes('admin') ? 'background-color:#32a89d' : 'background-color:#32a89d; opacity: 0.3'">
         <div class="card_image">
           <lord-icon v-if="LordIcon"
           src="https://cdn.lordicon.com/cjieiyzp.json"
@@ -164,7 +169,7 @@
       </div>
     </div>
 
-    <!-- Preventivi -->
+    <!-- Preventivi
     <div style="flex: 0 0 20%">
       
       <div 
@@ -184,14 +189,15 @@
         </div>
       </div>
     </div>
+     -->
 
     <!-- Contentibilità POD/PDR -->
     <div style="flex: 0 0 20%">
       
       <div 
-      @click="permissions.includes('contendibilita') ||  permissions.includes('admin') ? goToPage('/contendibilita') : callNoPermissions()" 
-      :class="permissions.includes('contendibilita') || permissions.includes('admin') ? 'card' : 'card-disabled'" 
-        :style="permissions.includes('contendibilita') || permissions.includes('admin') ? 'background-color:rgb(7, 160, 195)' : 'background-color:rgb(7, 160, 195); opacity: 0.3'">
+      @click="permissions.includes('operatore') ||  permissions.includes('admin') ? goToPage('/contendibilita') : callNoPermissions()" 
+      :class="permissions.includes('operatore') || permissions.includes('admin') ? 'card' : 'card-disabled'" 
+        :style="permissions.includes('operatore') || permissions.includes('admin') ? 'background-color:rgb(7, 160, 195)' : 'background-color:rgb(7, 160, 195); opacity: 0.3'">
         <div class="card_image">
           <lord-icon v-if="LordIcon"
           src="https://cdn.lordicon.com/ofwpzftr.json"
@@ -224,7 +230,7 @@
     </div> -->
 	
 	
-	 <!-- BI -->
+	 <!-- BI 
     <div style="flex: 0 0 20%">
       
       <div 
@@ -244,9 +250,9 @@
         </div>
       </div>
     </div>
+    -->
 
-
-    <!-- INVIO EMAIL MASSIVE -->
+    <!-- INVIO EMAIL MASSIVE
     <div style="flex: 0 0 20%">
       <div v-if="permissions.includes('admin')" @click="goToPage('/email_massive/invio')" class="card 4" style="background-color:#DD1C1A">
         <div class="card_image">
@@ -262,6 +268,7 @@
         </div>
       </div>
     </div>
+    -->
 
     <!-- ADMIN -->
     <div style="flex: 0 0 20%">

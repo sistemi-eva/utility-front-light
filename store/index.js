@@ -411,24 +411,52 @@ export const mutations = {
     state.show_menu = menu
   },
   setAuthRcuTenants(state, data) {
+
     try {
       var tempTenants = []
-      if(!!data && (data.includes('rcu_eva_group') || state.auth.permissions.includes('admin'))) {
-        tempTenants = state.default_tenants
-      }else{
-        for(let i in data) {
-          if(data[i].startsWith('rcu')){
-            var part = data[i].substring(
-              data[i].indexOf("_") + 1, 
-              data[i].lastIndexOf("_"))
-            if(part === '2g') part = 'dueg'
-            let temp = state.default_tenants.filter(el=>el.name === part)
-            if(temp.length > 0){
-              tempTenants.push(temp[0])
+
+      if(state.auth.permissions.includes('superadmin')){
+        console.log("super admin nn nn")
+        this.$axios.get('/api/auth/tenants', {
+          headers:{
+            'Secret-Key' : state.auth.token
+          }
+        }).then(
+        ({data}) => {
+          console.log(data.data)
+          for(var i in data.data){
+            tempTenants.push({name:data.data[i].tenant,fullName:data.data[i].tenant,piva:'00'}) 
+          }
+          state.auth.rcu_tenants = tempTenants
+          state.tenant_ee = tempTenants
+          state.tenant_gas = tempTenants
+          console.log(state.auth.rcu_tenants)
+        },
+        error => {
+          console.log(error)
+          
+        })
+      }
+      else{
+        if(!!data && (data.includes('rcu_eva_group') || state.auth.permissions.includes('admin'))) {
+          tempTenants = state.default_tenants
+        }else{
+          for(let i in data) {
+            if(data[i].startsWith('rcu')){
+              var part = data[i].substring(
+                data[i].indexOf("_") + 1, 
+                data[i].lastIndexOf("_"))
+              if(part === '2g') part = 'dueg'
+              let temp = state.default_tenants.filter(el=>el.name === part)
+              if(temp.length > 0){
+                tempTenants.push(temp[0])
+              }
             }
           }
         }
       }
+
+      console.log(tempTenants)
       state.auth.rcu_tenants = tempTenants
     } catch (error) {
       console.log("e",error) 
