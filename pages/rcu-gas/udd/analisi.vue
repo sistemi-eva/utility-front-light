@@ -1,5 +1,5 @@
 <template>
-<div v-if="!showError">
+<div>
   <el-row :gutter="20">
     <el-col :span="14">
       <span style="font-size:20pt; font-weight:600">Analisi Annuale</span>
@@ -35,7 +35,7 @@
         <div slot="header" class="clearfix">
           <div style="display:flex;align-items:center;justify-content: space-between;">
           <span>Pdr persi (Data Importazione RCU) in base mensile</span>
-          <div style="display:flex">
+          <div style="display:flex;justify-content:center;align-items:center">
             <el-select @change="chartPodInformation" style="padding-left:5px" v-model="meseGraficoPodSelezionato" placeholder="Mese">
               <el-option
                 v-for="item in mesi"
@@ -44,6 +44,13 @@
                 :value="item">
               </el-option>
             </el-select>
+            <el-tooltip class="item" effect="dark" content="" placement="left-start">
+            <div slot="content">
+              <h3>Pdr Persi mensilmente rispetto al totale dei pdr del mese impostato,<br> 
+              con la possibilità di analizzare dettagliatamente la perdita percentuale</h3>
+              </div>
+              <i style="padding-left:20px;" class="el-icon-info"></i>
+            </el-tooltip>
             <!-- <el-button @click="chartPodInformation" style="margin-left:5px" type="success">Aggiorna</el-button> -->
           </div>
           </div>
@@ -55,8 +62,8 @@
       <el-card class="box-card">
         <div slot="header" class="clearfix">
           <div style="display:flex;align-items:center;justify-content: space-between;">
-          <span>Pdr persi (Data Attivazione) in base mensile</span>
-          <div style="display:flex">
+          <span>Pdr persi (Data Attivazione Fornitura) in base mensile</span>
+          <div style="display:flex;justify-content:center;align-items:center">
             <el-select @change="chartPodDispacciamentoInformation" style="padding-left:5px" v-model="meseGraficoDispPodSelezionato" placeholder="Mese">
               <el-option
                 v-for="item in mesi"
@@ -66,6 +73,13 @@
                 :value="item">
               </el-option>
             </el-select>
+            <el-tooltip class="item" effect="dark" content="" placement="left-start">
+            <div slot="content">
+              <h3>Pdr Persi mensilmente rispetto alla data attivazione della fornitura del mese impostato,<br> 
+              con la possibilità di analizzare dettagliatamente la perdita percentuale</h3>
+              </div>
+              <i style="padding-left:20px;" class="el-icon-info"></i>
+            </el-tooltip>
             <!-- <el-button @click="chartPodInformation" style="margin-left:5px" type="success">Aggiorna</el-button> -->
           </div>
           </div>
@@ -75,24 +89,15 @@
     </el-col>
   </el-row>
 </div>
-<div v-else style="display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  min-height: 100%;">
-  <h2> Non hai ancora importato alcun file. </h2>
-  <h3> Recati ora nella sezione importazioni, per effettuare il tuo primo import. </h3>
-</div>
 </template>
 
 <script>
+const today = new Date();
 import Graficoannuale from '@/components/rcu/graficoannuale.vue'
 import Graficoannualepod from '@/components/rcu/graficoannualepod.vue'
 import Graficoultimianni from '@/components/rcu/graficoultimianni.vue'
 import tabellastatisticheannuali from '@/components/rcu/tabellastatisticheannuali.vue'
 export default {
-  name: 'rcu-udd-ee-analisi',
  components: {
     Graficoannuale,
     Graficoannualepod,
@@ -101,7 +106,6 @@ export default {
   },
   data() {
     return {
-      showError: false,
       tabs: 'pod-vol',
       date:'',
       meseGraficoPodSelezionato: 'Gennaio',
@@ -127,10 +131,15 @@ export default {
     }else {
       await this.getLastImport()
     }
-    if(this.annoSelezionato) {
-      for(let i = 0; i<5; i++){ this.ultimi5anni.push(new Date().getFullYear()-i)}
-      await this.updateFunction()
+    for(let i = 0; i<5; i++){ this.ultimi5anni.push(new Date().getFullYear()-i)}
+
+    for(var i in this.ultimi5anni){
+      if(this.ultimi5anni[i] == today.getFullYear()){
+
+        this.annoSelezionato = this.ultimi5anni[i]
+      }
     }
+    await this.updateFunction()
   },
   methods: {
     async getLastImport() {
@@ -142,7 +151,7 @@ export default {
       ({data}) => {
         if(data.data && data.data.length > 0) {
           this.annoSelezionato = data.data[0].ANNO.toString()
-        }else this.showError = true
+        }
       },
       error => {
         console.log(error)
@@ -171,14 +180,16 @@ export default {
       this.tableIncPodAnnuale = []
     },
     async updateFunction(){
-      await this.clearAllForUpdate()
-      await this.changeTab()
-      await this.chartPodInformation()
-      await this.tablePodInformation()
-      await this.tableVolumiInformation()
-      await this.tableIncVolumiInformation()
-      await this.tableIncPodInformation()
-      await this.chartPodDispacciamentoInformation()
+      if(this.annoSelezionato && this.meseSelezionato){
+        await this.clearAllForUpdate()
+        await this.changeTab()
+        await this.chartPodInformation()
+        await this.tablePodInformation()
+        await this.tableVolumiInformation()
+        await this.tableIncVolumiInformation()
+        await this.tableIncPodInformation()
+        await this.chartPodDispacciamentoInformation()
+      }
     },
     esporta(){
       let self = this

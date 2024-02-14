@@ -13,6 +13,18 @@
           </div>
         </el-col>
         <el-col :span="14" style="text-align:right">
+          <span v-if="!!status_cache">
+            <el-button v-if="status_cache != 'cached_old'" :loading="status_cache == 'in_lavorazione' ? true : false" 
+              :disabled="status_cache == 'cached' ? true : false"  @click="refreshCache" 
+              type="primary" icon="el-icon-refresh">{{status_cache == 'in_lavorazione' ? 'Cache in aggiornamento' : 'Aggiorna Cache'}}</el-button>
+            <el-button v-else :loading="status_cache == 'in_lavorazione' ? true : false" 
+              :disabled="status_cache == 'cached' ? true : false"  @click="refreshCache" 
+              type="danger" icon="el-icon-refresh">Aggiorna cache con ultima versione</el-button>
+            <el-button 
+                v-if="status_cache != 'in_lavorazione'"
+                @click="deleteCache" 
+                type="primary" icon="el-icon-delete">Elimina Cache</el-button>
+          </span>
           <el-button @click="showCheck" type="primary" icon="el-icon-document">Controlli</el-button>
           <el-button @click="showEsporta" type="primary" icon="el-icon-document">Esporta</el-button>
           <el-button  @click="showImporta" type="primary"  icon="el-icon-plus">Importa</el-button>
@@ -50,6 +62,7 @@
       <el-table
         :data="pagedTableData"
         :row-class-name="tableRowClassName"
+        :default-sort="{ prop: 'id', order: 'descending' }"
         style="width: 100%"
         >
         <el-table-column
@@ -165,6 +178,7 @@ export default {
     },
     data: () => {
     return {
+        status_cache: null,
         page: 1,
         pageSize: 9,
         history:[],
@@ -180,11 +194,76 @@ export default {
         uploadPercentage: 0
     }
   },
-  mounted() {
+  async mounted() {
+    await this.statusCache()
     this.fetchStatusContent()
     this.fetchFolderContent()
   },
   methods: {
+    statusCache(){
+      this.$axios.get('/api/rcu-gas/cc/status-cache', {
+        headers:{
+          'Secret-Key' : this.$store.getters['authToken']
+        },
+      }).then(
+      ({data}) => {
+        this.status_cache = data.data
+      },
+      error => {
+        console.log(error)
+        this.$message({
+          showClose: true,
+          message: error.response.data.message
+        })
+      })
+     },
+     deleteCache(){
+      this.$axios.get('/api/rcu-gas/cc/delete-cache', {
+        headers:{
+          'Secret-Key' : this.$store.getters['authToken']
+        },
+      }).then(
+      async ({data}) => {
+        this.$notify({
+          title: 'Cache Eliminata Con successo',
+          message: 'La richiesta di eliminazione della cache è andata a buon fine',
+          type: 'success'
+        });
+        await this.statusCache()
+      },
+      error => {
+        console.log(error)
+        this.$message({
+          showClose: true,
+          message: error.response.data.message
+        })
+      })
+     },
+     refreshCache(){
+      this.$axios.get('/api/rcu-gas/cc/refresh-cache', {
+        headers:{
+          'Secret-Key' : this.$store.getters['authToken']
+        },
+      }).then(
+      async ({data}) => {
+        this.$notify({
+          title: 'Refresh cache avviato',
+          message: 'La richiesta di refresh della cache è stata presa in carico, tra qualche minuto le query di default verranno popolate',
+          type: 'success'
+        });
+        setTimeout(async ()=>{
+          await this.statusCache()
+        },2000)
+        
+      },
+      error => {
+        console.log(error)
+        this.$message({
+          showClose: true,
+          message: error.response.data.message
+        })
+      })
+     },
     downloadCSV(id){
       const loading = this.$loading({
         lock: true,

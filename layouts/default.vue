@@ -67,6 +67,17 @@
                 <span>{{item.label}}</span>
               </template>
               <span v-for="subItem in item.submenu">
+              <!--
+                <el-menu-item v-if="tenant != '_barocco'" :index="subItem.name" :disabled="(subItem.path === '/rcu-gas/udd/mappa' && tenantGas != 'ugm') || ( tenant != 'ugm'  && subItem.path ==='/rcu-ee/cc/mappa')" :route="subItem.path" :key="subItem.name">
+                  <i :class="subItem.icon"/>
+                  <span>{{subItem.label}}</span>
+                </el-menu-item>
+                <el-menu-item v-else-if="tenant == '_barocco' && (subItem.name === 'rcu-gas-udd-dashboard' || subItem.name === 'rcu-gas-udd-analisi' || subItem.name === 'rcu-gas-udd-history' || subItem.name === 'rcu-ee-cc-dashboard' || subItem.name === 'rcu-ee-cc-analisi' || subItem.name === 'rcu-ee-cc-history')" :index="subItem.name" :route="subItem.path" :key="subItem.name">
+                  <i :class="subItem.icon"/>
+                  <span>{{subItem.label}}</span>
+                </el-menu-item>
+              -->
+                
                 <el-menu-item v-if="tenant != '_barocco'" :index="subItem.name" :disabled="(subItem.path === '/rcu-gas/udd/mappa' && tenantGas != 'ugm') || ( tenant != 'ugm'  && subItem.path ==='/rcu-ee/cc/mappa')" :route="subItem.path" :key="subItem.name">
                   <i :class="subItem.icon"/>
                   <span>{{subItem.label}}</span>
@@ -125,7 +136,8 @@ export default {
       return this.$store.getters['authPermissions']
     },
     tenants() {
-      return this.$store.getters['authRcuTenants']
+      //return this.$store.getters['authRcuTenants']
+      return this.$cookies.get("myTenants")
     },
     vistaRcu() {
       return this.$store.getters['vistaRcu']
@@ -180,6 +192,7 @@ export default {
       this.showSide = !this.showSide
     },
     updateConfig(val){
+      console.log(val)
       const loading = this.$loading({
           lock: true,
           text: 'Stiamo Caricando il tuo file',
@@ -191,6 +204,7 @@ export default {
         window.location.reload(true)
     },
     updateConfigGas(val){
+      
       const loading = this.$loading({
           lock: true,
           text: 'Stiamo Caricando il tuo file',
@@ -200,6 +214,7 @@ export default {
         this.$cookies.set('tenant_gas',val, {path: '/'})
         loading.close()
         window.location.reload(true)
+
     },
     updateViewConfig(val){
       const loading = this.$loading({
@@ -210,7 +225,7 @@ export default {
         });
         this.$cookies.set('view_rcu',val, {path: '/'})
         loading.close()
-        window.location.reload(true)
+        //window.location.reload(true)
     },
     logout(){
       this.$cookies.remove('token')
@@ -218,6 +233,7 @@ export default {
       this.$cookies.remove('tenant_ee')
       this.$cookies.remove('tenant_gas')
       this.$cookies.remove('name')
+      this.$cookies.remove('myTenants')
       this.$notify({
         title: 'Logout Effettuato',
         message: 'Sei uscito dalla parte protetta',

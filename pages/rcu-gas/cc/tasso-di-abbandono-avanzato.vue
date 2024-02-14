@@ -1,12 +1,19 @@
 <template>
   <div v-if="!showError">
-    <tree-view v-model="showTree" @confirm="getTreeData" />
+    <tree-view v-model="showTree" @confirm="getTreeData"/>
+    <tree-view2 v-model="showTree2" @confirm="getTreeData"/>
+    <el-col :span="24">
+      <span style="font-size:20pt; font-weight:600"
+        >Tasso di abbadono avanzato</span
+      ><br />
+      <span style="font-size:11pt; font-weight:400"
+        >È consigliabile utilizzare i filtri speciali solo per l'anno 2021</span
+      >
+    </el-col>
     <el-row :gutter="20">
-      <el-col :span="6">
-        <span style="font-size:20pt; font-weight:600">Tasso di abbandono</span>
-      </el-col>
-      <el-col style="text-align:right" :span="18">
+      <el-col style="padding-top:20px; text-align:right" :span="24">
         <el-form ref="form" label-width="120px">
+          <el-button type="primary" v-if="tenant == 'ugm'" @click="showTree2 = true">Filtra per Tipologia Cliente</el-button>
           <el-button type="primary" v-if="tenant == 'ugm'" @click="showTree = true">Filtra per Business Unit</el-button>
           <el-select
             @change="updateAll"
@@ -41,6 +48,20 @@
           <el-select
             @change="updateAll"
             style="padding-left:10px;padding-right:10px;width:218px"
+            v-model="elementiSelezionati"
+            placeholder="Numero Elementi"
+          >
+            <el-option
+              v-for="item in arrayElementsTemp"
+              :key="item.value"
+              :label="'Mostra ' + item.name + ' mensilità'"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+          <el-select
+            @change="updateAll"
+            style="padding-left:10px;padding-right:10px;width:218px"
             v-model="annoSelezionato"
             placeholder="Anno"
           >
@@ -52,53 +73,32 @@
             >
             </el-option>
           </el-select>
+          <el-button type="primary" @click="emitExport = true; emitExport2 = true"
+            >Esporta</el-button
+          >
+          <el-button type="primary" @click="hideOperations">{{
+            hideQuarter ? "Nascondi Mensilità" : "Mostra Mensilità"
+          }}</el-button>
         </el-form>
       </el-col>
     </el-row>
-    <el-col :span="24">
-      <span style="font-size:11pt; font-weight:400"
-        >È consigliabile utilizzare i filtri speciali solo per l'anno 2021</span
-      >
-    </el-col>
     <el-row style="padding-top:30px" :gutter="20">
       <el-col :span="24">
-        <Graficoperditapod @clickDetail="clickDetail" :chart="chart" />
+        <table-ta
+          v-model="emitExport"
+          :hideQuarter="hideQuarter"
+          :table="table"
+        />
       </el-col>
-      <el-col
-        v-if="selectedMonth && selectedYear"
-        style="padding-top:30px"
-        :span="24"
-      >
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <div
-              style="display:flex;align-items:center;justify-content: space-between;"
-            >
-              <span
-                >{{ this.mesi[selectedMonth - 1] }} - {{ selectedYear }}</span
-              >
-              <div
-                style="display:flex;justify-content:center;align-items:center"
-              >
-                <el-tooltip
-                  class="item"
-                  effect="dark"
-                  content=""
-                  placement="left-start"
-                >
-                  <div slot="content">
-                    <h2>
-                      Riscontro grafico tra punto iniziale e punto attuale con
-                      approfondimento mensile in percentuale
-                    </h2>
-                  </div>
-                  <i style="padding-left:20px;" class="el-icon-info"></i>
-                </el-tooltip>
-              </div>
-            </div>
-          </div>
-          <ChurnRate :chart="chartDetail" />
-        </el-card>
+    </el-row>
+
+    <el-row style="padding-top:30px" :gutter="20">
+      <el-col :span="24">
+        <table-ta-volumi
+          v-model="emitExport2"
+          :hideQuarter="hideQuarter"
+          :table="table_volumi"
+        />
       </el-col>
     </el-row>
   </div>
@@ -121,13 +121,20 @@
 <script>
 import ChurnRate from "@/components/rcu/churnRate.vue";
 import Graficoperditapod from "@/components/rcu/graficoperditapod.vue";
+import TableTa from "@/components/rcu/tableTa.vue";
+import TableTaVolumi from "@/components/rcu/tableTaVolumi.vue";
 import TreeView from '@/components/tree-view.vue'
+import TreeView2 from '@/components/tree-view2.vue'
 
 export default {
   components: {
     Graficoperditapod,
     ChurnRate,
-    TreeView
+    TableTa,
+    TableTaVolumi,
+    TreeView,
+    TreeView2
+
   },
   computed: {
       tenant(){
@@ -136,15 +143,20 @@ export default {
     },
   data() {
     return {
-      agente_id:null,
       showTree:false,
+      showTree2: false,
+      agente_id:null,
+      hideQuarter:true,
+      hideQuarter: true,
+      emitExport: false,
+      emitExport2: false,
       showError: false,
+      lastAnnoImport:"",
       selectedMonth: "",
       selectedYear: "",
       ultimi5anni: [],
-      lastAnnoImport:"",
-      annoSelezionato: "",
-      meseSelezionato: "",
+      elementiSelezionati: 12,
+      arrayElementsTemp: [],
       selectedFilterPagamento: null,
       selectedInvioFattura: null,
       filterPagamento: [
@@ -155,6 +167,15 @@ export default {
         { label: "Digitale", value: 1 },
         { label: "Cartacea", value: 0 },
       ],
+      arrayElements: [
+        { name: "Tutte le", value: 0 },
+        { name: "12", value: 12 },
+        { name: "24", value: 24 },
+        { name: "36", value: 36 },
+        { name: "48", value: 48 },
+      ],
+      annoSelezionato: "",
+      meseSelezionato: "",
       mesi: [
         "Gennaio",
         "Febbraio",
@@ -172,6 +193,8 @@ export default {
       chart: {},
       chartDetail: {},
       societa: [],
+      table: {},
+      table_volumi: {}
     };
   },
   async mounted() {
@@ -180,8 +203,7 @@ export default {
       for (let i = 0; i < 5; i++) {
         this.ultimi5anni.push((new Date().getFullYear() - i).toString());
       }
-      await this.chartPerditaPod();
-      await this.ragioneSocialeCC();
+      await this.updateAll();
     }
   },
   methods: {
@@ -189,6 +211,18 @@ export default {
       this.showTree=false
       this.agente_id = el
       this.updateAll()
+    },
+    async updateElements() {
+      this.arrayElementsTemp = [];
+      if (this.annoSelezionato) {
+        let index = new Date().getFullYear() - this.annoSelezionato + 1;
+        for (let i = 0; i <= index; i++) {
+          this.arrayElementsTemp.push(this.arrayElements[i]);
+        }
+      }
+    },
+    async hideOperations() {
+      this.hideQuarter = !this.hideQuarter;
     },
     async getLastImport() {
       await this.$axios
@@ -240,10 +274,9 @@ export default {
         })
         .then(
           async ({ data }) => {
-            (this.selectedMonth = ""),
-              (this.selectedYear = ""),
-              (this.chartDetail = {});
-            await this.chartPerditaPod();
+            await this.updateElements();
+            await this.tablePerditaPod();
+            await this.tablePerditaVolumi();
             setTimeout(async () => {
               loading.close();
             }, 500);
@@ -258,30 +291,9 @@ export default {
         );
       // }
     },
-    async ragioneSocialeCC() {
+    async tablePerditaPod() {
       await this.$axios
-        .get("/api/rcu-gas/cc/societa", {
-          headers: {
-            "Secret-Key": this.$store.getters["authToken"],
-          },
-          params: {},
-        })
-        .then(
-          ({ data }) => {
-            this.societa = data.data;
-          },
-          (error) => {
-            console.log(error);
-            this.$message({
-              showClose: true,
-              message: error.response.data.message,
-            });
-          }
-        );
-    },
-    async chartPerditaPod() {
-      await this.$axios
-        .get("/api/rcu-gas/cc/chart-perdita-pod-information", {
+        .get("/api/rcu-gas/cc/table-tasso-abbandono", {
           headers: {
             "Secret-Key": this.$store.getters["authToken"],
           },
@@ -289,6 +301,7 @@ export default {
             agente_id: this.agente_id === '' ? null : this.agente_id,
             invio_fatture: this.selectedInvioFattura,
             modalita_pagamento: this.selectedFilterPagamento,
+            limitElements: this.elementiSelezionati,
             annopartenza: this.annoSelezionato,
             mese: this.meseSelezionato,
             anno: this.lastAnnoImport
@@ -296,7 +309,7 @@ export default {
         })
         .then(
           ({ data }) => {
-            this.chart = data.data;
+            this.table = data.data;
           },
           (error) => {
             console.log(error);
@@ -307,9 +320,10 @@ export default {
           }
         );
     },
-    async chartDetailPod() {
+
+    async tablePerditaVolumi() {
       await this.$axios
-        .get("/api/rcu-gas/cc/chart-perdita-dettaglio-pod-information", {
+        .get("/api/rcu-gas/cc/table-tasso-abbandono-volumi", {
           headers: {
             "Secret-Key": this.$store.getters["authToken"],
           },
@@ -317,13 +331,15 @@ export default {
             agente_id: this.agente_id === '' ? null : this.agente_id,
             invio_fatture: this.selectedInvioFattura,
             modalita_pagamento: this.selectedFilterPagamento,
-            mese: this.selectedMonth,
-            anno: this.selectedYear,
+            limitElements: this.elementiSelezionati,
+            annopartenza: this.annoSelezionato,
+            mese: this.meseSelezionato,
+            anno: this.lastAnnoImport
           },
         })
         .then(
           ({ data }) => {
-            this.chartDetail = data.data;
+            this.table_volumi = data.data;
           },
           (error) => {
             console.log(error);
@@ -333,7 +349,7 @@ export default {
             });
           }
         );
-    },
+    }
   },
 };
 </script>

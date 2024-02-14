@@ -1,11 +1,31 @@
 <template>
 <div v-if="!showError">
+    <tree-view v-model="showTree" @confirm="getTreeData" />
+    <tree-view2 v-model="showTree2" @confirm="getTreeData" />
   <el-row :gutter="20">
-    <el-col :span="14">
+    <el-col :span="4">
       <span style="font-size:20pt; font-weight:600">Churn Rate</span>
     </el-col>
-    <el-col style="text-align:right" :span="10">
+    <el-col style="text-align:right" :span="20">
       <el-form ref="form" label-width="120px">
+        <el-button type="primary" v-if="tenant == 'ugm'" @click="showTree2 = true">Filtra per Tipologia Cliente</el-button>
+        <el-button type="primary" v-if="tenant == 'ugm'" @click="showTree = true">Filtra per Business Unit</el-button>
+        <el-select @change="updateAll" clearable  style="padding-left:10px;padding-right:10px;width:218px" v-model="selectedInvioFattura" placeholder="Mod. invio fatture">
+          <el-option
+            v-for="item in filterInvioFattura"
+            :key="item.label"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        <el-select @change="updateAll" clearable style="padding-left:10px;padding-right:10px;width:218px" v-model="selectedFilterPagamento" placeholder="Mod. pagamento">
+          <el-option
+            v-for="item in filterPagamento"
+            :key="item.label"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
         <el-select style="padding-left:10px;padding-right:10px;width:218px" v-model="selectedView" placeholder="Modalità visualizzazione">
           <el-option
             v-for="item in typeView"
@@ -25,16 +45,18 @@
       </el-form>
     </el-col>
   </el-row>
-
+ <el-col :span="24">
+    <span style="font-size:11pt; font-weight:400">È consigliabile utilizzare i filtri speciali solo per l'anno 2021</span>
+  </el-col>
   <el-row style="padding-top:30px" :gutter="20">
     <el-col :span="24">
-        <grafico-att-disat-pod :type_chart="selectedView" :chart="chartPod" />
+        <grafico-att-disat-pod  :type="'gas'" :type_chart="selectedView" :chart="chartPod" />
     </el-col>
   </el-row>
 
   <el-row style="padding-top:30px" :gutter="20">
     <el-col :span="24">
-        <grafico-att-disat-volumi :type_chart="selectedView" :chart="chart" />
+        <grafico-att-disat-volumi :type="'gas'" :type_chart="selectedView" :chart="chart" />
     </el-col>
   </el-row>
   
@@ -54,21 +76,38 @@
 import Graficoperditapod from '@/components/rcu/graficoperditapod.vue'
 import graficoAttDisatVolumi from '@/components/rcu/graficoAttDisatVolumi.vue'
 import GraficoAttDisatPod from '@/components/rcu/graficoAttDisatPod.vue'
+import TreeView from '@/components/tree-view.vue';
+import TreeView2 from '@/components/tree-view2.vue';
+
 export default {
     components: {
         Graficoperditapod,
         graficoAttDisatVolumi,
         GraficoAttDisatPod,
+        TreeView,
+        TreeView2
     },
+    computed: {
+    tenant() {
+      return this.$store.state.tenant_gas;
+    },
+  },
   data() {
     return {
+      agente_id:null,
+      showTree:false,
+      showTree2: false,
       showError: false,
       selectedMonth: '',
       selectedYear: '',
       ultimi5anni: [],
+      lastAnnoImport:'',
+      selectedFilterPagamento: null,
+      selectedInvioFattura: null,
+      filterPagamento: [{label:'SDD',value:1},{label:'NON SDD',value:0}],
+      filterInvioFattura: [{label:'Digitale',value:1},{label:'Cartacea',value:0}],
       selectedView: 'assoluti',
       typeView: [{label:'Valori Assoluti',value:'assoluti'},{label:'Valori Percentuale',value:'percentuale'}],
-      lastAnnoImport:"",
       annoSelezionato: '',
       meseSelezionato: '',
       mesi: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
@@ -85,16 +124,21 @@ export default {
     }
   },
   methods: {
+    async getTreeData(el){
+      this.showTree=false
+      this.agente_id = el
+      this.updateAll()
+    },
     async getLastImport() {
-      await this.$axios.get('/api/rcu-gas/udd/last-import', {
+      await this.$axios.get('/api/rcu-gas/cc/last-import', {
         headers:{
           'Secret-Key' : this.$store.getters['authToken']
         }
       }).then(
       ({data}) => {
         if(data.data && data.data.length > 0) {
-          this.annoGraficoPodSelezionato = data.data[0].ANNO.toString()
           this.lastAnnoImport = JSON.parse(JSON.stringify(data.data[0].ANNO.toString()))
+          this.annoGraficoPodSelezionato = data.data[0].ANNO.toString()
           this.annoSelezionato = data.data[0].ANNO.toString()
           this.meseSelezionato = data.data[0].MESE.toString()
           }else this.showError = true
@@ -108,12 +152,14 @@ export default {
       })
     },
     async updateAll(){
+      if(this.selectedInvioFattura === '') this.selectedInvioFattura = null
+      if(this.selectedFilterPagamento === '') this.selectedFilterPagamento = null
       const loading = this.$loading({
         lock: true,
         spinner: 'el-icon-loading',
         background: 'rgba(0, 0, 0, 0.7)'
       });
-      this.$axios.get('/api/rcu-gas/udd/check-sintesi', {
+      this.$axios.get('/api/rcu-gas/cc/check-sintesi', {
       headers:{
         'Secret-Key' : this.$store.getters['authToken']
       },
@@ -137,13 +183,16 @@ export default {
       })
       // }
     },
-    
     async chartAndamentoVolumi() {
-      await this.$axios.get('/api/rcu-gas/udd/att-dis-volumi', {
+      
+      await this.$axios.get('/api/rcu-gas/cc/att-dis-volumi', {
         headers:{
           'Secret-Key' : this.$store.getters['authToken']
         },
         params: {
+          agente_id: this.agente_id === '' ? null : this.agente_id,
+          invio_fatture: this.selectedInvioFattura,
+          modalita_pagamento: this.selectedFilterPagamento,
           annopartenza: this.annoSelezionato,
           mese: this.meseSelezionato,
           anno: this.lastAnnoImport
@@ -159,13 +208,18 @@ export default {
           message: error.response.data.message
         })
       })
+      
     },
     async chartAndamentoPod() {
-      await this.$axios.get('/api/rcu-gas/udd/att-dis-pod', {
+
+      await this.$axios.get('/api/rcu-gas/cc/att-dis-pod', {
         headers:{
           'Secret-Key' : this.$store.getters['authToken']
         },
         params: {
+          agente_id: this.agente_id === '' ? null : this.agente_id,
+          invio_fatture: this.selectedInvioFattura,
+          modalita_pagamento: this.selectedFilterPagamento,
           annopartenza: this.annoSelezionato,
           mese: this.meseSelezionato,
           anno: this.lastAnnoImport
@@ -180,7 +234,8 @@ export default {
           showClose: true,
           message: error.response.data.message
         })
-      })
+      })  
+    
     },
   }
 }

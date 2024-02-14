@@ -1,5 +1,5 @@
 <template>
-<div>
+<div v-if="!showError">
   <el-row :gutter="20">
     <el-col :span="14">
       <span style="font-size:20pt; font-weight:600">Dashboard</span>
@@ -27,15 +27,15 @@
       </el-form>
     </el-col>
   </el-row>
-  <sintesi :annoSelezionato="annoSelezionato" :meseSelezionato="meseSelezionato" :sintesi="sintesi" />
+  <sintesi :type="'gas'" :annoSelezionato="annoSelezionato" :meseSelezionato="meseSelezionato" :sintesi="sintesi" />
   <el-row style="padding-top:30px" :gutter="20">
     <el-col :span="12">
         <div class="grid-content bg-purple">
         <el-card class="box-card">
-      <div slot="header" class="clearfix">
+      <div slot="header"  class="clearfix">
         <span>Riassunto Mensile</span>
       </div>
-        <tabella-societa :table="table" />
+        <tabella-societa :type="'gas'" :table="table" />
         </el-card>
         </div>
     </el-col>
@@ -55,12 +55,21 @@
     <el-col :span="12">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
-          <span>Andamento Volume (m3) Annuale</span>
+          <span>Andamento m³ Annuale</span>
         </div>
         <graficoincrementoannuovolume :type="'gas'" :seriesGraficoIncrementoVolumeAnnuale="seriesGraficoIncrementoVolumeAnnuale"  />
       </el-card>
     </el-col>
   </el-row>
+</div>
+<div v-else style="display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 100%;">
+  <h2> Non hai ancora importato alcun file. </h2>
+  <h3> Recati ora nella sezione importazioni, per effettuare il tuo primo import. </h3>
 </div>
 </template>
 
@@ -82,6 +91,7 @@ export default {
   },
   data() {
     return {
+      showError: false,
       ultimi5anni: [],
       seriesGraficoIncrementoPodAnnuale: [],
       seriesGraficoIncrementoVolumeAnnuale: [],
@@ -94,11 +104,13 @@ export default {
   },
   async mounted() {
     await this.getLastImport()
-    for(let i = 0; i<5; i++){ this.ultimi5anni.push((new Date().getFullYear()-i).toString())}
-    await this.tableInformation()
-    await this.sintesiInformation()
-    await this.chartIncrementoAnnPodInformation()
-    await this.chartIncrementoAnnVolumeInformation()
+    if(this.annoSelezionato){
+      for(let i = 0; i<5; i++){ this.ultimi5anni.push((new Date().getFullYear()-i).toString())}
+      await this.tableInformation()
+      await this.sintesiInformation()
+      await this.chartIncrementoAnnPodInformation()
+      await this.chartIncrementoAnnVolumeInformation()
+    }
   },
   methods: {
     async getLastImport() {
@@ -113,7 +125,7 @@ export default {
           this.annoSelezionato = data.data[0].ANNO.toString()
           this.annoGraficoSelezionato = data.data[0].ANNO.toString()
           this.meseSelezionato = this.mesi[data.data[0].MESE-1].toString()
-        }
+        }else this.showError = true
       },
       error => {
         console.log(error)

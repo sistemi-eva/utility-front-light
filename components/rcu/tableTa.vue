@@ -70,14 +70,42 @@ import XLSX from 'xlsx'
     methods: {
       exportExcel () {
         this.$emit('input', false) 
+
+        var xlsxParam = { raw: true };
+
+// Creazione di fogli di lavoro per ciascuna tabella
+var sheet1 = XLSX.utils.table_to_sheet(document.querySelector('.exportTable'), xlsxParam);
+var sheet3 = XLSX.utils.table_to_sheet(document.querySelector('.exportTable3'), xlsxParam);
+
+// Creazione dell'oggetto di foglio di lavoro e aggiunta dei fogli di lavoro
+var wb = XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb, sheet1, 'Tabella1');
+XLSX.utils.book_append_sheet(wb, sheet3, 'Tabella2');
+
+var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' });
+
+try {
+    // Salvataggio del foglio di lavoro come file Excel
+    FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'export.xlsx');
+} catch (e) {
+    if (typeof console !== 'undefined') console.log(e, wbout);
+}
+
+return wbout;
+
+
+        
+        /*
         var xlsxParam = { raw: true }
         var wb = XLSX.utils.table_to_book(document.querySelector('.exportTable'),xlsxParam)
-        console.log("we",wb)
+
         var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' })
         try {
           FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'export.xlsx')
         } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
         return wbout
+
+        */
       },
       getColors ({row, column, rowIndex, columnIndex}) {
         let entita = this.table.headers[columnIndex]

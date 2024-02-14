@@ -82,6 +82,7 @@ export default {
         await this.$cookies.set('view_rcu','reale', {path: '/'})
         await this.$cookies.set('tenant_ee',res.data.data.tenant)
         await this.$cookies.set('tenant_gas',res.data.data.tenant)
+        await this.$cookies.set('azienda',res.data.data.azienda)
 
         this.$router.push('/')
       }).catch((e)=>{

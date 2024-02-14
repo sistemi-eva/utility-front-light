@@ -1,37 +1,18 @@
 const md5 = require('md5');
 var CryptoJS = require("crypto-js");
 
-const menu = {
+var menu = {
   admin: [
     {
-      path: '/admin/settings',
-      icon: 'el-icon-lock',
-      name: 'admin-settings',
-      label: 'Impostazioni'
+      path: '/admin/utenti',
+      icon: 'el-icon-document-copy',
+      name: 'admin-utenti',
+      label: 'Utenti'
     }
+
   ],
-  solleciti: [
-    {
-      path: '/solleciti',
-      icon: 'el-icon-files',
-      name: 'solleciti',
-      label: 'Convertitore Solleciti'
-    }
-  ],
-  preventivi: [
-    {
-      path: '/preventivi',
-      icon: 'el-icon-coin',
-      name: 'preventivi',
-      label: 'Preventivi'
-    },
-    {
-      path: '/preventivi/search',
-      icon: 'el-icon-search',
-      name: 'preventivi-search',
-      label: 'Ricerca Globale'
-    }
-  ],
+
+
   agenziadogane : [
     {
       path: '/agenziadogane/crea-singolo',
@@ -170,22 +151,66 @@ const menu = {
   ],
   'rcu-gas': [
     {
+      path: '/rcu-gas/cc',
+      icon: 'el-icon-s-order',
+      name: 'rcu-gas-cc',
+      label: 'Controparte Commerciale',
+      submenu: [
+        {
+          path: '/rcu-gas/cc/dashboard',
+          icon: 'el-icon-s-home',
+          name: 'rcu-gas-cc-dashboard',
+          label: 'Dashboard'
+        },
+        {
+          path: '/rcu-gas/cc/mappa',
+          icon: 'el-icon-map-location',
+          name: 'rcu-gas-cc-mappa',
+          label: 'Mappa'
+        },
+        {
+          path: '/rcu-gas/cc/analisi',
+          icon: 'el-icon-c-scale-to-original',
+          name: 'rcu-gas-cc-analisi',
+          label: 'Analisi Annuale'
+        },
+        {
+          path: '/rcu-gas/cc/tasso-di-abbandono',
+          icon: 'el-icon-data-line',
+          name: 'rcu-gas-cc-tasso-di-abbandono',
+          label: 'Tasso di abbandono'
+        },
+        {
+          path: '/rcu-gas/cc/tasso-di-abbandono-avanzato',
+          icon: 'el-icon-data-analysis',
+          name: 'rcu-gas-cc-tasso-di-abbandono-avanzato',
+          label: 'Tasso di abbandono Avanzato'
+        },
+        {
+          path: '/rcu-gas/cc/churn-analysis',
+          icon: 'el-icon-s-data',
+          name: 'rcu-gas-cc-churn-analysis',
+          label: 'Churn Rate'
+        },
+        {
+          path: '/rcu-gas/cc/history',
+          icon: 'el-icon-s-order',
+          name: 'rcu-gas-cc-history',
+          label: 'Importazioni'
+        },
+      ]
+    },
+    {
       path: '/rcu-gas/udd',
       icon: 'el-icon-s-order',
-      name: 'rcu-gas-udd',
-      label: 'Utente del dispacciamento',
+      name: 'rcu-ee-udd',
+      label: 'Utente della distribuzione',
       submenu: [
         {
           path: '/rcu-gas/udd/dashboard',
           icon: 'el-icon-s-home',
           name: 'rcu-gas-udd-dashboard',
           label: 'Dashboard'
-        },
-        {
-          path: '/rcu-gas/udd/mappa',
-          icon: 'el-icon-map-location',
-          name: 'rcu-gas-udd-mappa',
-          label: 'Mappa'
         },
         {
           path: '/rcu-gas/udd/analisi',
@@ -411,7 +436,7 @@ export const mutations = {
     state.show_menu = menu
   },
   setAuthRcuTenants(state, data) {
-
+    
     try {
       var tempTenants = []
 
@@ -430,7 +455,20 @@ export const mutations = {
           state.auth.rcu_tenants = tempTenants
           state.tenant_ee = tempTenants
           state.tenant_gas = tempTenants
+
+          this.$cookies.set("myTenants", tempTenants) 
+          
           console.log(state.auth.rcu_tenants)
+
+          if(menu.admin[1] === undefined){
+            menu.admin.push(
+              {
+                path: '/admin/tenant',
+                icon: 'el-icon-document-copy',
+                name: 'admin-utenti',
+                label: 'Tenant'
+              })
+          }
         },
         error => {
           console.log(error)

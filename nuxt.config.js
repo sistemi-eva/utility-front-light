@@ -19,7 +19,7 @@ module.exports = {
     ]
   },
   env: {
-    pdfCreator: process.env.NODE_ENV !== 'production' ? 'http://127.0.0.1:3999' : 'http://192.168.2.217:3999',
+   
     eva: 'hWmZq4t7w!z%C*F)J@NcRfUjXn2r5u8x'
   },
   /*
@@ -57,7 +57,7 @@ module.exports = {
   ** Axios module configuration
   */
   axios: {
-    baseURL: process.env.NODE_ENV !== 'production' ? 'http://127.0.0.1:3998' : 'http://192.168.2.147:3998'  
+    baseURL: process.env.NODE_ENV !== 'production' ? 'http://127.0.0.1:3998' : 'http://192.168.2.59:3998'  
     // See https://github.com/nuxt-community/axios-module#options
   },
 

@@ -1,7 +1,7 @@
 <template>
 <div>
   <el-menu class="el-menu-demo" mode="horizontal">
-    <el-menu-item >Utility Eva Energy Service</el-menu-item>
+    <el-menu-item >{{ this.$cookies.get('azienda') }}</el-menu-item>
     <el-menu-item style="float:right" @click="logout()" >Logout</el-menu-item>
   </el-menu>
   <div class="cards-centered-wrapper">

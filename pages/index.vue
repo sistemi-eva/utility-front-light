@@ -272,7 +272,7 @@
 
     <!-- ADMIN -->
     <div style="flex: 0 0 20%">
-      <div v-if="permissions.includes('admin')" @click="goToPage('/admin/settings')" class="card 4" style="background-color:#DD1C1A">
+      <div v-if="permissions.includes('admin')" @click="goToPage('/admin/utenti')" class="card 4" style="background-color:#DD1C1A">
         <div class="card_image">
           <lord-icon v-if="LordIcon"
           src="https://cdn.lordicon.com/eszyyflr.json"

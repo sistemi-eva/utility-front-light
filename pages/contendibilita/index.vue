@@ -205,6 +205,11 @@
           label="Righe importate"
           align="left"
         />
+		<el-table-column
+          prop="righe_file"
+          label="Righe file"
+          align="left"
+        />
       </el-table>
     </div>
   </div>

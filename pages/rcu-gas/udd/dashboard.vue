@@ -1,5 +1,5 @@
 <template>
-<div v-if="!showError">
+<div>
   <el-row :gutter="20">
     <el-col :span="14">
       <span style="font-size:20pt; font-weight:600">Dashboard</span>
@@ -27,15 +27,15 @@
       </el-form>
     </el-col>
   </el-row>
-  <sintesi :type="'gas'" :annoSelezionato="annoSelezionato" :meseSelezionato="meseSelezionato" :sintesi="sintesi" />
+  <sintesi :annoSelezionato="annoSelezionato" :meseSelezionato="meseSelezionato" :sintesi="sintesi" />
   <el-row style="padding-top:30px" :gutter="20">
     <el-col :span="12">
         <div class="grid-content bg-purple">
         <el-card class="box-card">
-      <div slot="header"  class="clearfix">
+      <div slot="header" class="clearfix">
         <span>Riassunto Mensile</span>
       </div>
-        <tabella-societa :type="'gas'" :table="table" />
+        <tabella-societa :table="table" />
         </el-card>
         </div>
     </el-col>
@@ -55,25 +55,17 @@
     <el-col :span="12">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
-          <span>Andamento m³ Annuale</span>
+          <span>Andamento Volume (m3) Annuale</span>
         </div>
         <graficoincrementoannuovolume :type="'gas'" :seriesGraficoIncrementoVolumeAnnuale="seriesGraficoIncrementoVolumeAnnuale"  />
       </el-card>
     </el-col>
   </el-row>
 </div>
-<div v-else style="display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  min-height: 100%;">
-  <h2> Non hai ancora importato alcun file. </h2>
-  <h3> Recati ora nella sezione importazioni, per effettuare il tuo primo import. </h3>
-</div>
 </template>
 
 <script>
+const today = new Date();
 import Graficomensile from '@/components/rcu/graficomensile.vue'
 import graficoincrementoannuopod from '@/components/rcu/graficoincrementoannuopod.vue'
 import graficoincrementoannuovolume from '@/components/rcu/graficoincrementoannuovolume.vue'
@@ -91,7 +83,6 @@ export default {
   },
   data() {
     return {
-      showError: false,
       ultimi5anni: [],
       seriesGraficoIncrementoPodAnnuale: [],
       seriesGraficoIncrementoVolumeAnnuale: [],
@@ -103,14 +94,25 @@ export default {
     }
   },
   async mounted() {
+    this.meseSelezionato = this.mesi[today.getMonth()];
     await this.getLastImport()
-    if(this.annoSelezionato){
-      for(let i = 0; i<5; i++){ this.ultimi5anni.push((new Date().getFullYear()-i).toString())}
-      await this.tableInformation()
-      await this.sintesiInformation()
-      await this.chartIncrementoAnnPodInformation()
-      await this.chartIncrementoAnnVolumeInformation()
+    for(let i = 0; i<5; i++){ this.ultimi5anni.push((new Date().getFullYear()-i).toString())}
+  
+    for(var i in this.ultimi5anni){
+      if(this.ultimi5anni[i] == today.getFullYear()){
+
+        this.annoSelezionato = this.ultimi5anni[i]
+      }
     }
+
+    if(this.annoSelezionato){
+      
+    await this.tableInformation()
+    await this.sintesiInformation()
+    await this.chartIncrementoAnnPodInformation()
+    await this.chartIncrementoAnnVolumeInformation()
+    }
+
   },
   methods: {
     async getLastImport() {
@@ -125,7 +127,7 @@ export default {
           this.annoSelezionato = data.data[0].ANNO.toString()
           this.annoGraficoSelezionato = data.data[0].ANNO.toString()
           this.meseSelezionato = this.mesi[data.data[0].MESE-1].toString()
-        }else this.showError = true
+        }
       },
       error => {
         console.log(error)
@@ -162,37 +164,42 @@ export default {
       });
     },
     async updateAll(){
-      const loading = this.$loading({
-        lock: true,
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      });
-      this.$axios.get('/api/rcu-gas/udd/check-sintesi', {
-      headers:{
-        'Secret-Key' : this.$store.getters['authToken']
-      },
-      params: {
-        mese: this.mesi.indexOf(this.meseSelezionato)+1,
-        anno: this.annoSelezionato
-      }
-      }).then(
-      async ({data}) => {
-        await this.tableInformation()
-        await this.sintesiInformation()
-        await this.chartIncrementoAnnPodInformation()
-        await this.chartIncrementoAnnVolumeInformation()
-        setTimeout(async () => {
+      if(this.annoSelezionato && this.meseSelezionato){
+        const loading = this.$loading({
+          lock: true,
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+        this.$axios.get('/api/rcu-gas/udd/check-sintesi', {
+        headers:{
+          'Secret-Key' : this.$store.getters['authToken']
+        },
+        params: {
+          mese: this.mesi.indexOf(this.meseSelezionato)+1,
+          anno: this.annoSelezionato
+        }
+        }).then(
+        async ({data}) => {
+
+          await this.tableInformation()
+          await this.sintesiInformation()
+          await this.chartIncrementoAnnPodInformation()
+          await this.chartIncrementoAnnVolumeInformation()
+          setTimeout(async () => {
+            loading.close()
+          },500)
+        },
+        error => {
           loading.close()
-        },500)
-      },
-      error => {
-        loading.close()
-        this.$message({
-          showClose: true,
-          message: error.response.data.message
+          this.$message({
+            showClose: true,
+            message: error.response.data.message
+          })
         })
-      })
-      // }
+        // }
+      }
+
+
     },
     async tableInformation() {
       this.$axios.get('/api/rcu-gas/udd/table-information', {

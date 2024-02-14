@@ -7,6 +7,7 @@
       center>
       <el-form>
       <el-form-item>
+         
           <el-form-item label="Mese Competenza">
             <el-input type="number" min=0 max=12 v-model="mese" placeholder="(0-12)" ></el-input>
           </el-form-item>
