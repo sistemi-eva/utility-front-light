@@ -14,6 +14,7 @@ export default async function ({ app, store, route, redirect, $cookies, $axios }
         store.commit('setAuthPermissions', data.data.permissions)
         store.commit('setAuthRcuTenants', data.data.member_of)
         store.commit('setAuthMemberOf', data.data.member_of)
+        $cookies.set("permissions", data.data.permissions)
       },
       (error) => {
         console.log(error)

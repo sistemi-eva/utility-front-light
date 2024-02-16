@@ -110,6 +110,7 @@ export default {
   computed: {
     tenant: {
       get () {
+        console.log(this.$store.state.tenant_ee)
         return this.$store.state.tenant_ee
       },
       set (value) {
@@ -118,6 +119,7 @@ export default {
     },
     tenantGas: {
       get () {
+        console.log(this.$store.state.tenant_gas)
         return this.$store.state.tenant_gas
       },
       set (value) {
@@ -160,6 +162,7 @@ export default {
             store.commit('setAuthPermissions', data.permissions)
             store.commit('setAuthRcuTenants', data.member_of)
             store.commit('setAuthMemberOf', data.data.member_of)
+            
           },
           (error) => {
             console.log('replace login',error)

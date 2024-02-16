@@ -351,7 +351,12 @@ var menu = {
   ]
 }
 
+
+
+
 export const state = () => ({
+
+
   selectedItemsForWork: [],
   lastPath: '/',
   currentPath: '/',
@@ -384,6 +389,7 @@ export const state = () => ({
 export const mutations = {
   
  addItemForWork(state, item) {
+  
     let hash = md5(`${item.path}/${item.name}`)
     let itemIndex = state.selectedItemsForWork.map(el => el.hash).indexOf(hash)
     if(itemIndex < 0) {
@@ -404,6 +410,15 @@ export const mutations = {
     state.selectedItemsForWork = []
   },
   setPath(state, path) {
+    if(menu.admin[1] === undefined && this.$cookies.get("permissions") == "superadmin" ){
+      menu.admin.push(
+        {
+          path: '/admin/tenant',
+          icon: 'el-icon-document-copy',
+          name: 'admin-utenti',
+          label: 'Tenant'
+        })
+    }
     state.lastPath = this.currentPath
     state.currentPath = path
   },
@@ -440,35 +455,26 @@ export const mutations = {
     try {
       var tempTenants = []
 
-      if(state.auth.permissions.includes('superadmin')){
-        console.log("super admin nn nn")
+      if( this.$cookies.get("permissions") == "superadmin" ){
+
         this.$axios.get('/api/auth/tenants', {
           headers:{
             'Secret-Key' : state.auth.token
           }
         }).then(
         ({data}) => {
-          console.log(data.data)
           for(var i in data.data){
             tempTenants.push({name:data.data[i].tenant,fullName:data.data[i].tenant,piva:'00'}) 
           }
           state.auth.rcu_tenants = tempTenants
-          state.tenant_ee = tempTenants
-          state.tenant_gas = tempTenants
+          //state.tenant_ee = tempTenants
+          //state.tenant_gas = tempTenants
 
           this.$cookies.set("myTenants", tempTenants) 
           
           console.log(state.auth.rcu_tenants)
 
-          if(menu.admin[1] === undefined){
-            menu.admin.push(
-              {
-                path: '/admin/tenant',
-                icon: 'el-icon-document-copy',
-                name: 'admin-utenti',
-                label: 'Tenant'
-              })
-          }
+          
         },
         error => {
           console.log(error)
@@ -499,6 +505,7 @@ export const mutations = {
     } catch (error) {
       console.log("e",error) 
     }
+
   }
 }
 
@@ -539,6 +546,11 @@ export const actions = {
     commit('setViewRcu', view_rcu)
     const name = $cookies.get('name')
     commit('setAuthName', name)
+    
+
+    
+
+
     if(!!token) {
       $axios.$get('/api/auth/permissions', {
         headers: {
