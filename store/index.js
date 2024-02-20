@@ -415,7 +415,7 @@ export const mutations = {
         {
           path: '/admin/tenant',
           icon: 'el-icon-document-copy',
-          name: 'admin-utenti',
+          name: 'admin-tenant',
           label: 'Tenant'
         })
     }
