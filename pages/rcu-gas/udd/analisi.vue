@@ -180,16 +180,16 @@ export default {
       this.tableIncPodAnnuale = []
     },
     async updateFunction(){
-      if(this.annoSelezionato && this.meseSelezionato){
-        await this.clearAllForUpdate()
-        await this.changeTab()
-        await this.chartPodInformation()
-        await this.tablePodInformation()
-        await this.tableVolumiInformation()
-        await this.tableIncVolumiInformation()
-        await this.tableIncPodInformation()
-        await this.chartPodDispacciamentoInformation()
-      }
+      
+	await this.clearAllForUpdate()
+	await this.changeTab()
+	await this.chartPodInformation()
+	await this.tablePodInformation()
+	await this.tableVolumiInformation()
+	await this.tableIncVolumiInformation()
+	await this.tableIncPodInformation()
+	await this.chartPodDispacciamentoInformation()
+      
     },
     esporta(){
       let self = this
