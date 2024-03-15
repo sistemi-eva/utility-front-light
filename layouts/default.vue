@@ -21,7 +21,7 @@
           router
           >
           <div style="padding:20px; cursor: pointer" @click.prevent="$router.push('/')">
-            <img style="display: block; margin-left: auto; margin-right: auto; width: 50%;" src="http://www.evaenergyservice.it/assets/img/logo.png">
+            <img style="display: block; margin-left: auto; margin-right: auto; width: 50%;" src="/logo-eva.png">
           </div>
           <div style="padding:15px" >
             <div v-if="permissions.includes('superadmin')">
