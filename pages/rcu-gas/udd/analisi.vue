@@ -181,14 +181,14 @@ export default {
     },
     async updateFunction(){
       
-	await this.clearAllForUpdate()
-	await this.changeTab()
-	await this.chartPodInformation()
-	await this.tablePodInformation()
-	await this.tableVolumiInformation()
-	await this.tableIncVolumiInformation()
-	await this.tableIncPodInformation()
-	await this.chartPodDispacciamentoInformation()
+      await this.clearAllForUpdate()
+      await this.changeTab()
+      await this.chartPodInformation()
+      await this.tablePodInformation()
+      await this.tableVolumiInformation()
+      await this.tableIncVolumiInformation()
+      await this.tableIncPodInformation()
+      await this.chartPodDispacciamentoInformation()
       
     },
     esporta(){
