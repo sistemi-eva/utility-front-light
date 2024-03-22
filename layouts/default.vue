@@ -47,6 +47,7 @@
               </el-option>
             </el-select>
             </div>
+            <!--
             <el-select v-if="currentMenu.section == 'rcu-ee' || currentMenu.section == 'rcu-gas'" style="width:100%;padding-top:10px" @change="updateViewConfig" v-model="view" placeholder="Seleziona">
               <el-option
                 v-for="item in visteRcu"
@@ -55,6 +56,7 @@
                 :value="item.value">
               </el-option>
             </el-select>
+            -->
           </div>
           <template v-for="item in currentMenu.items">
             <el-menu-item v-if="!item.submenu" :index="item.name" :route="item.path" :key="item.name">
