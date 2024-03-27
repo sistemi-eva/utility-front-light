@@ -57,7 +57,7 @@ module.exports = {
   ** Axios module configuration
   */
   axios: {
-    baseURL: process.env.NODE_ENV !== 'production' ? 'http://127.0.0.1:3998' : 'http://192.168.2.59:3998'  
+	  baseURL: process.env.NODE_ENV !== 'production' ? 'http://127.0.0.1:3998' : 'https://api.utility.evasolutions.it'  
     // See https://github.com/nuxt-community/axios-module#options
   },
 
@@ -79,7 +79,7 @@ module.exports = {
   },
   server: {
     port: 4000, //4000, // default: 3000
-    //host: '192.168.2.147' //'192.168.2.26' // default: localhost
-    host: process.env.NODE_ENV !== 'production' ? '127.0.0.1' : '192.168.2.59'
+    //host: '192.168.229.2' // default: localhost
+    host: process.env.NODE_ENV !== 'production' ? '127.0.0.1' : '192.168.229.2'
   }
 }
