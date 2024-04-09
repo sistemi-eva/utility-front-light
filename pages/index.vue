@@ -192,7 +192,8 @@
      -->
 
     <!-- Contentibilità POD/PDR -->
-    <div style="flex: 0 0 20%">
+    <!--
+	<div style="flex: 0 0 20%">
       
       <div 
       @click="permissions.includes('operatore') ||  permissions.includes('admin') ? goToPage('/contendibilita') : callNoPermissions()" 
@@ -211,6 +212,8 @@
         </div>
       </div>
     </div>
+	
+	-->
 
     <!-- Preventivi -->
     <!-- <div style="flex: 0 0 20%">

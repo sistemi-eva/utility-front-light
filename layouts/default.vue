@@ -29,8 +29,7 @@
               <el-option
                 v-for="item in tenants"
                 :key="item.name"
-                :label="item.fullName
-                "
+                :label="item.fullName"
                 :value="item.name">
               </el-option>
             </el-select>
@@ -41,8 +40,7 @@
               <el-option
                 v-for="item in tenants"
                 :key="item.name"
-                :label="item.fullName
-                "
+                :label="item.fullName"
                 :value="item.name">
               </el-option>
             </el-select>
