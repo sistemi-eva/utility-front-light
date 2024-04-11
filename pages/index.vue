@@ -359,7 +359,7 @@ export default {
   z-index: 0;
   width: 90%;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
